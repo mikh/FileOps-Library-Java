@@ -1,7 +1,9 @@
 package file_operations;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -126,5 +128,17 @@ public class FileOps {
 		if(f.exists() && f.isDirectory())
 			return true;
 		return false;
+	}
+
+	public static ArrayList<String> loadFileIntoArrayList(String filename) throws IOException{
+		ArrayList<String> list = new ArrayList<String>();
+		BufferedReader br = new BufferedReader(new FileReader(filename));
+		String line = br.readLine();
+		while(line != null){
+			list.add(line);
+			line = br.readLine();
+		}
+		br.close();
+		return list;
 	}
 }
