@@ -116,6 +116,24 @@ public class FileOps {
 		return files;
 	}
 	
+	public static ArrayList<String> getFilesRecursive(String path){
+		File folder = new File(path);
+		File[] listOfFiles = folder.listFiles();
+		ArrayList<String> files = new ArrayList<String>();
+		for(int ii = 0; ii < listOfFiles.length; ii++){
+			if(listOfFiles[ii].isFile())
+				files.add(listOfFiles[ii].getAbsolutePath());
+			else if(listOfFiles[ii].isDirectory()){
+				ArrayList<String> tempFiles = getFilesRecursive(listOfFiles[ii].getAbsolutePath());
+				for(int jj = 0; jj < tempFiles.size(); jj++)
+					files.add(tempFiles.get(jj));
+			}
+		}
+		
+		return files;
+	}
+
+	
 	public static boolean fileExists(String file){
 		File f = new File(file);
 		if(f.exists() && !f.isDirectory())
