@@ -14,6 +14,8 @@ import static java.nio.file.StandardCopyOption.*;
 import string_operations.StrOps;
 
 public class FileOps {
+	
+	
 	public static String createFolder(String location, String name){
 		
 		try{
@@ -41,6 +43,27 @@ public class FileOps {
 			System.out.println("Failed to copy files.");
 			System.exit(-1);
 		}
+	}
+	
+	/**
+	 * Performs overwrite copy of a file from its current location to the destination.
+	 * @param file - full path to the file
+	 * @param destination - path to destination directory
+	 * @return returns true if success, false if failure
+	 */
+	public static boolean copyFile(String file, String destination){
+		try{
+			ArrayList<String> path = breakFilePath(file);
+			if(path.size() > 0){
+				String filename = path.get(path.size() -1);
+				String dest_path = destination + "\\" + filename;
+				Files.copy(Paths.get(file), Paths.get(dest_path), REPLACE_EXISTING);
+			}
+		} catch(IOException e){
+			System.out.println("[ERROR] cantrip.file_operations.fileops.copyFile error:: IOException when trying to copy file");
+			return false;
+		}
+		return true;
 	}
 	
 	public static void writeToFile(String filepath, String str, boolean append){
@@ -147,6 +170,11 @@ public class FileOps {
 			return true;
 		return false;
 	}
+	
+	public static long getLastModifiedOfFile(String file){
+		File f = new File(file);
+		return f.lastModified();
+	}
 
 	public static ArrayList<String> loadFileIntoArrayList(String filename) throws IOException{
 		ArrayList<String> list = new ArrayList<String>();
@@ -158,5 +186,42 @@ public class FileOps {
 		}
 		br.close();
 		return list;
+	}
+	
+	public static ArrayList<String> breakFilePath(String path){
+		ArrayList<String> b_path = new ArrayList<String>();
+		String prev_instance = null, cur_instance = path;
+		while(prev_instance == null || !prev_instance.equals(cur_instance)){
+			if(cur_instance != null && prev_instance != null)
+				b_path.add(cur_instance);
+			prev_instance = cur_instance;
+			cur_instance = StrOps.getDilineatedSubstring(path, "\\", b_path.size(), false);
+		}
+		return b_path;
+	}
+	
+	public static String buildFilePath(ArrayList<String> b_path){
+		String path = "";
+		for(int ii = 0; ii < b_path.size(); ii++){
+			path += b_path.get(ii);
+			if(ii != b_path.size()-1)
+				path += "\\";
+		}
+		return path;
+	}
+	
+	public static ArrayList<String> findFiles(String pattern, String start_directory, boolean recurse){
+		ArrayList<String> files = null;
+		if(recurse)
+			files = getFilesRecursive(start_directory);
+		else
+			files = getAllFilesInDirectory(start_directory);
+		
+		for(int ii = files.size()-1; ii >= 0; ii--){
+			if(!StrOps.patternMatch(files.get(ii), pattern))
+				files.remove(ii);
+		}
+		
+		return files;
 	}
 }
