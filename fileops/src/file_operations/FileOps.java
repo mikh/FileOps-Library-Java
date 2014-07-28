@@ -76,6 +76,19 @@ public class FileOps {
 			System.exit(-1);
 		}
 	}
+
+	public static void writeToFile(String filepath, ArrayList<String> strings, boolean append){
+		try{
+			BufferedWriter bw = new BufferedWriter(new FileWriter(filepath, append));
+			for(int ii = 0; ii < strings.size(); ii++)
+				bw.write(strings.get(ii));
+			bw.close();
+		} catch(IOException e){
+			System.out.println("Failed to write to file " + filepath);
+			System.exit(-1);
+		}
+	}
+	
 	
 	public static void moveFile(String start_location, String final_location){
 		try{
@@ -156,6 +169,20 @@ public class FileOps {
 		return files;
 	}
 
+	/**
+	 * Returns all files matching a specific pattern. Requires StrOps Library.
+	 * @param path - starting path to being searching from
+	 * @param pattern - pattern to match for files. * allowed
+	 * @return list of files that are found recursively from the path that match the pattern
+	 */
+	public static ArrayList<String> getFilesRecursive(String path, String pattern){
+		ArrayList<String> files = getFilesRecursive(path);
+		for(int ii = files.size()-1; ii >=0; ii--){
+			if(!StrOps.patternMatch(files.get(ii), pattern))
+				files.remove(ii);
+		}
+		return files;
+	}
 	
 	public static boolean fileExists(String file){
 		File f = new File(file);
@@ -187,6 +214,7 @@ public class FileOps {
 		br.close();
 		return list;
 	}
+
 	
 	public static ArrayList<String> breakFilePath(String path){
 		ArrayList<String> b_path = new ArrayList<String>();
@@ -224,4 +252,6 @@ public class FileOps {
 		
 		return files;
 	}
+
+
 }
