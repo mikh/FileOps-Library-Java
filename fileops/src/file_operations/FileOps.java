@@ -159,7 +159,9 @@ public class FileOps {
 		for(int ii = 0; ii < listOfFiles.length; ii++){
 			if(listOfFiles[ii].isFile())
 				files.add(listOfFiles[ii].getAbsolutePath());
-			else if(listOfFiles[ii].isDirectory()){
+		}
+		for(int ii = 0; ii < listOfFiles.length; ii++){
+			if(listOfFiles[ii].isDirectory()){
 				ArrayList<String> tempFiles = getFilesRecursive(listOfFiles[ii].getAbsolutePath());
 				for(int jj = 0; jj < tempFiles.size(); jj++)
 					files.add(tempFiles.get(jj));
