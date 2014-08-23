@@ -13,70 +13,122 @@ import java.util.ArrayList;
 import static java.nio.file.StandardCopyOption.*;
 import string_operations.StrOps;
 
+
+/**
+ * File Operations class - defines many static methods that deal with file operations. Some of these are just wrappers for Java functions with the same purpose. Others are more advanced features.
+ * @author Mikhail Andreev
+ * 
+ * @needed_features TODO: - Need documentation across all functions. 
+ * 					  Need better error checking
+ * 					  Need logfile integration
+ * 
+ * @bugs
+ */
 public class FileOps {
-	
-	
+
+	/**
+	 * Creates a folder called <name> at the path <location>
+	 * 
+	 * @issue TODO: - needs better error checking than just general exception catching
+	 * @feature TODO: - logfile integration
+	 * 
+	 * @param location - path to the folder (not including the new folder name)
+	 * @param name - name the folder is to be called
+	 * @return path into the folder (including the folder name) if the function was successful. Returns null otherwise
+	 */
 	public static String createFolder(String location, String name){
 		
 		try{
 			File f = new File(location + "\\" + name);
 			f.mkdir();
-			/*if(!f.mkdir()){
-				System.out.println("Failed to create directory " + location + "\\" + name);
-				System.exit(-1);
-			}*/
 		} catch(Exception e){
 			System.out.println("Failed to create directory " + location + "\\" + name);
-			System.exit(-1);
+			return null;		//returns null to signal file has not been properly created.
 		}
 		
-		return location + "\\" + name;
+		return location + "\\" + name;		//return the path to the file
 	}
 	
-	public static void copyFiles(ArrayList<String> files, String destination){
+	
+	/**
+	 * Copies all files as specified in the arraylist <files> into the path destination with same name as they currently have
+	 * 
+	 * @issue TODO: need better error checking than just general exception catching
+	 * @issue TODO: its uncertain how good getDilineatedSubstring is - edge cases may case errors. Perhaps breakFilePah would be better. However that function also needs to be examined.
+	 * @feature TODO: logfile integration
+	 * 
+	 * @param files - an arraylist of files that are to be copied. This should be the absolute path to the file.
+	 * @param destination - absolute path to the destination directory where files should be put
+	 * @return returns true if operation succeeded, false otherwise.
+	 */
+	public static boolean copyFiles(ArrayList<String> files, String destination){
 		try{
-			for(int ii = 0; ii < files.size(); ii++){
-				String file_name = StrOps.getDilineatedSubstring(files.get(ii), "\\", 0, true);
-				Files.copy(Paths.get(files.get(ii)), Paths.get(destination + "\\" + file_name), REPLACE_EXISTING);
+			for(int ii = 0; ii < files.size(); ii++){		//for each file to copy...
+				String file_name = StrOps.getDilineatedSubstring(files.get(ii), "\\", 0, true);		//get the filename
+				Files.copy(Paths.get(files.get(ii)), Paths.get(destination + "\\" + file_name), REPLACE_EXISTING);		//use the Files.copy method to copy the file, attaching the extracted filename
 			}
 		} catch(Exception e){
 			System.out.println("Failed to copy files.");
-			System.exit(-1);
+			return false;
 		}
+		return true;
 	}
 	
 	/**
 	 * Performs overwrite copy of a file from its current location to the destination.
+	 * 
+	 * @issue TODO: doesn't consider what happens if breakFilePath fails for some reason (and returns null)
+	 * @issue TODO: Only catches IOExceptions - there could be others (needs checking)
+	 * @feature TODO: logfile integration
+	 * 
 	 * @param file - full path to the file
 	 * @param destination - path to destination directory
 	 * @return returns true if success, false if failure
 	 */
 	public static boolean copyFile(String file, String destination){
 		try{
-			ArrayList<String> path = breakFilePath(file);
-			if(path.size() > 0){
-				String filename = path.get(path.size() -1);
-				String dest_path = destination + "\\" + filename;
-				Files.copy(Paths.get(file), Paths.get(dest_path), REPLACE_EXISTING);
+			ArrayList<String> path = breakFilePath(file);	//break the String filepath apart into its sections
+			if(path.size() > 0){	//if the path size isn't nothing - then copy the file. TODO: need to respond to when the field is 0 or null
+				String filename = path.get(path.size() -1);		//get the filename
+				String dest_path = destination + "\\" + filename;	//add the filename to the destination
+				Files.copy(Paths.get(file), Paths.get(dest_path), REPLACE_EXISTING);	//copy the file
 			}
-		} catch(IOException e){
+		} catch(IOException e){		//TODO: when does IOException occur?
 			System.out.println("[ERROR] cantrip.file_operations.fileops.copyFile error:: IOException when trying to copy file");
 			return false;
 		}
 		return true;
 	}
 	
-	public static void writeToFile(String filepath, String str, boolean append){
+	/**
+	 * Writes a string to the file, either overwriting the file or appending it.
+	 * 
+	 * @issue TODO:Need more exception handling. There are likely other issue besides just IOException
+	 * @feature TODO:logfile integration
+	 * 
+	 * @param filepath - absolute path to the file
+	 * @param str - string to write to the file
+	 * @param append - determines whether to append to the file or to overwrite the file
+	 * @return returns true if the write was successful. False otherwise.
+	 */
+	public static boolean writeToFile(String filepath, String str, boolean append){
 		try{
 			BufferedWriter bw = new BufferedWriter(new FileWriter(filepath, append));
 			bw.write(str);
 			bw.close();
-		} catch(IOException e){
+		} catch(IOException e){		//TODO: when this exception occur
 			System.out.println("Failed to write to file " + filepath);
-			System.exit(-1);
+			return false;
 		}
+		return true;
 	}
 
+	/**
+	 * 
+	 * @param filepath
+	 * @param strings
+	 * @param append
+	 */
 	public static void writeToFile(String filepath, ArrayList<String> strings, boolean append){
 		try{
 			BufferedWriter bw = new BufferedWriter(new FileWriter(filepath, append));

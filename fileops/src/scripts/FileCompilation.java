@@ -1,4 +1,4 @@
-package scripts;
+ package scripts;
 
 import java.util.ArrayList;
 
@@ -7,14 +7,14 @@ import file_operations.FileOps;
 
 public class FileCompilation {
 	public static void main(String[] args){
-		/*
+		
 		String start_directory = args[0];
 		String pattern = args[1];
 		String archiveDirectory = args[2];
 		boolean recurse = Boolean.parseBoolean(args[3]);
 		boolean group = Boolean.parseBoolean(args[4]);
 		String custom_group = args[5];
-	*/
+	/*
 		String start_directory = "C:\\Users\\mikhail.andreev\\Dropbox\\Programming\\Java\\Libraries";
 		String pattern = "*.jar";
 		String archiveDirectory = "C:\\Users\\mikhail.andreev\\Dropbox\\Programming\\Java\\Libraries\\All Archives";

@@ -2,7 +2,6 @@ package test;
 
 import java.util.ArrayList;
 
-import string_operations.StrOps;
 import file_operations.FileOps;
 
 public class Test {
